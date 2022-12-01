@@ -44,7 +44,7 @@ df = scores.join(races.alias("races"), scores.raceId ==  races.raceId,"left") \
      .join(races.alias("prevRace"), col("prevRace.raceId") == scores.raceId - 1, "left") \
      .filter(col("races.year") == 2021) \
      .filter(scores.position == 1) \
-     .select(scores.raceId, col("races.name"), drivers.surname, col("races.date").alias("to_date"), col("prevRace.date").alias("from_date"));
+     .select(scores.raceId, col("races.name"), drivers.surname, col("races.date").alias("to_date"), col("prevRace.date").alias("from_date")).show()
 
 
 # tweets.filter(tweets.date >= df.collect()[0][4]) \
