@@ -2,11 +2,25 @@ from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.functions import row_number
 from pyspark.sql.window import Window
 from pyspark.sql.functions import *
+from google.cloud import storage
+import pandas as pd
 
-f1_tweet_data_path = './data/F1_tweets.csv'
-f1_score_path = './data/f1_stats/results.csv'
-f1_divers_path = './data/f1_stats/drivers.csv'
-f1_races_path = './data/f1_stats/races.csv'
+def download_csv(csv_name):
+    bucket_path = "de2022_f1"
+    client = storage.Client()
+    bucket = client.bucket(bucket_path)
+    if isinstance(csv_name, list):
+        for csv in csv_name:
+            bucket.blob(csv).download_to_filename(f"data/{csv}")
+    else:
+        bucket.blob(csv_name).download_to_filename(f"data/{csv_name}")
+
+download_csv(["races.csv","drivers.csv", "results.csv", "F1_tweets.csv"])
+
+f1_tweet_data_path = "data/F1_tweets.csv"
+f1_races_path = "data/races.csv"
+f1_score_path = "data/results.csv"
+f1_divers_path = "data/drivers.csv"
 
 # Create Spark session
 spark = SparkSession.builder \
@@ -17,15 +31,12 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 def get_data(file_name):
-    return spark.read.csv(file_name, header='true');
+    return spark.read.csv(file_name, header=True);
 
 tweets = get_data(f1_tweet_data_path);
-
 races = get_data(f1_races_path);
 scores = get_data(f1_score_path);
 drivers = get_data(f1_divers_path);
-
-
 
 df = scores.join(races.alias("races"), scores.raceId ==  races.raceId,"left") \
      .orderBy(col("races.raceId")) \
