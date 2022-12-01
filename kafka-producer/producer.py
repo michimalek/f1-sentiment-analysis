@@ -1,9 +1,10 @@
 from kafka import KafkaProducer
+import csv
+import json
 
-
-def kafka_python_producer_sync(producer, msg, topic):
-    producer.send(topic, bytes(msg, encoding='utf-8'))
-    print("Sending " + msg)
+def kafka_python_producer_sync(producer, row, topic):
+    producer.send(topic, value=row)
+    print(row)
     producer.flush(timeout=60)
 
 
@@ -21,11 +22,15 @@ def kafka_python_producer_async(producer, msg, topic):
 
 
 if __name__ == '__main__':
-    producer = KafkaProducer(bootstrap_servers='VM_IP:9092')  # use your VM's external IP Here!
-    with open('/Users/jonathan/Documents/JADS/year-1/data-engineering/DE-assignment-2/work_dir/data/wordcount.txt') as f:
-        lines = f.readlines()
+    producer = KafkaProducer(
+        bootstrap_servers='34.123.212.95:9092',
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')) 
 
-    for line in lines:
-        kafka_python_producer_sync(producer, line, 'tweet')
-
-    f.close()
+    with open('/Users/jonathan/Documents/JADS/year-1/data-engineering/DE-assignment-2/work_dir/data/F1_tweets.csv') as file:
+        reader = csv.DictReader(file, delimiter=",")
+        counter = 0
+        for row in reader:
+            if(counter <= 0):
+                kafka_python_producer_sync(producer, row, 'tweet')
+                counter += 1
+    file.close()
