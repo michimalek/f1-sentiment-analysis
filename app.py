@@ -5,6 +5,7 @@ from pyspark.sql.functions import *
 from google.cloud import storage
 import pandas as pd
 
+<<<<<<< Updated upstream
 def download_csv(csv_name):
     bucket_path = "de2022_f1"
     client = storage.Client()
@@ -21,6 +22,12 @@ f1_tweet_data_path = "data/F1_tweets.csv"
 f1_races_path = "data/races.csv"
 f1_score_path = "data/results.csv"
 f1_divers_path = "data/drivers.csv"
+=======
+f1_tweet_data_path = '../data/F1_tweets.csv'
+f1_score_path = '../data/f1_stats/results.csv'
+f1_divers_path = '../data/f1_stats/drivers.csv'
+f1_races_path = '../data/f1_stats/races.csv'
+>>>>>>> Stashed changes
 
 # Create Spark session
 spark = SparkSession.builder \
@@ -33,7 +40,12 @@ spark = SparkSession.builder \
 def get_data(file_name):
     return spark.read.csv(file_name, header=True);
 
+<<<<<<< Updated upstream
 tweets = get_data(f1_tweet_data_path);
+=======
+# tweets = get_data(f1_tweet_data_path);
+
+>>>>>>> Stashed changes
 races = get_data(f1_races_path);
 scores = get_data(f1_score_path);
 drivers = get_data(f1_divers_path);
@@ -44,8 +56,13 @@ df = scores.join(races.alias("races"), scores.raceId ==  races.raceId,"left") \
      .join(races.alias("prevRace"), col("prevRace.raceId") == scores.raceId - 1, "left") \
      .filter(col("races.year") == 2021) \
      .filter(scores.position == 1) \
+<<<<<<< Updated upstream
      .select(scores.raceId, col("races.name"), drivers.surname, col("races.date").alias("to_date"), col("prevRace.date").alias("from_date")).show()
 
+=======
+     .select(scores.raceId, col("races.name"), drivers.surname, col("races.date").alias("to_date"), col("prevRace.date").alias("from_date"));
+df.show()
+>>>>>>> Stashed changes
 
 # tweets.filter(tweets.date >= df.collect()[0][4]) \
 #     .filter(tweets.date <= df.collect()[0][3]).show()
