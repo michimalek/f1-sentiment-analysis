@@ -14,3 +14,4 @@ if __name__ == '__main__':
     topic_list = [NewTopic(name="tweet", num_partitions=1, replication_factor=1),]
 
     create_topics(admin_client, topic_list)
+    # delete_topics(admin_client)
