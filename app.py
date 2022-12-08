@@ -3,6 +3,7 @@ from pyspark.sql.functions import row_number
 from pyspark.sql.window import Window
 from pyspark.sql.functions import *
 import pandas as pd
+import csv
 
 spark = SparkSession.builder \
     .master("local") \
@@ -14,6 +15,9 @@ spark = SparkSession.builder \
 def get_data(file_name):
     return spark.read.csv(file_name, header='true');
 
-data_path = 'data/F1_tweets.csv'
-tweets = get_data(data_path);
-tweets.printSchema()
+
+with open('/Users/jonathan/Documents/JADS/year-1/data-engineering/DE-assignment-2/work_dir/data/F1_tweets.csv') as file:
+    reader = csv.DictReader(file, delimiter=",")
+    lines = [row for row in reader]
+    df = pd.DataFrame(lines)
+    df.sample(10000).to_csv('data/stream/random.csv', mode = 'w', index=False)

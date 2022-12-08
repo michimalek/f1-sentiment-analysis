@@ -31,31 +31,36 @@ class F1Producer(Thread):
 
     def __init__(self):
         Thread.__init__(self)
-        self.producer = KafkaProducer(bootstrap_servers='35.225.244.213:9092',
+        self.producer = KafkaProducer(bootstrap_servers='34.135.81.38:9092',
                                       value_serializer=lambda v: json.dumps(v).encode('utf-8')) 
                                                 
     def run(self):
-        while True:
-            try:
-                with open('/Users/jonathan/Documents/JADS/year-1/data-engineering/DE-assignment-2/work_dir/data/stream/test.csv') as file:
-                    reader = csv.DictReader(file, delimiter=",")
-                    lines = [row for row in reader]
+        try:
+            with open('/Users/jonathan/Documents/JADS/year-1/data-engineering/DE-assignment-2/work_dir/data/stream/random.csv') as file:
+                reader = csv.DictReader(file, delimiter=",")
+                lines = [row for row in reader]
+            
+            batchsize = 1000
 
-                # kafka_python_producer_sync(self.producer, lines, 'tweet')
+            for i in range(0, 10000, batchsize):
+                batch = lines[i:i + batchsize]
+                kafka_python_producer_sync(self.producer, batch, 'tweet')
+                time.sleep(20)
+            
+            # kafka_python_producer_sync(self.producer, batch, 'tweet')
+            
+            # for i in range(0, len(lines), batchsize):
+            #     batch = lines[i:i+batchsize]
+            #     kafka_python_producer_sync(self.producer, batch, 'tweet')
+            #     time.sleep(10)
 
+            file.close()
 
-                # batchsize = 10
-                # for i in range(0, len(lines), batchsize):
-                #     batch = lines[i:i+batchsize]
-                #     kafka_python_producer_sync(self.producer, batch, 'tweet')
-                #     time.sleep(10)
-
-                file.close()
-
-            except Exception as err:
-                print(err)
-                logging.info(f"Unexpected {err=}, {type(err)=}")
-                time.sleep(30)
+        except Exception as err:
+            print(err)
+            logging.info(f"Unexpected {err=}, {type(err)=}")
+            time.sleep(30)
+        
 
 if __name__ == '__main__':
     producer = F1Producer()
