@@ -15,6 +15,7 @@ mkdir checkpoint
 sudo chmod 777 notebooks/
 sudo chmod 777 data/
 sudo chmod 777 checkpoint/
+```
 - Change the ip address in the .env
 ```
 cd 'work-dir'/deployment/
