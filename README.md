@@ -42,3 +42,4 @@ gcloud compute firewall-rules create kafka-port --allow tcp:9092
 ```
 sudo docker logs spark-driver-app
 ```
+- Upload the notebooks from the repo to the /notebooks directory
