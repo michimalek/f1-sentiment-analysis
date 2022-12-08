@@ -16,6 +16,7 @@ sudo chmod 777 notebooks/
 sudo chmod 777 data/
 sudo chmod 777 checkpoint/
 ```
+- Change the volume paths in the `docker_compose.yml` file
 - Change the ip address in the .env
 ```
 cd 'work-dir'/deployment/
